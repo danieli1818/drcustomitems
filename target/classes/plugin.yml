@@ -1,0 +1,5 @@
+name: DRCustomItems
+version: ${project.version}
+main: drcustomitems.DRCustomItems
+authors: [DanielRottner]
+description: DRCustomItems Plugin For Custom Items.

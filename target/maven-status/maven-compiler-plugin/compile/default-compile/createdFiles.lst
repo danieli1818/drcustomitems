@@ -1,0 +1,10 @@
+drcustomitems\items\actions\Action.class
+drcustomitems\items\actions\types\EventAction.class
+drcustomitems\items\actions\BaseActionsHolder.class
+drcustomitems\items\actions\types\CommandAction.class
+drcustomitems\items\actions\CustomItemsActionsManager.class
+drcustomitems\items\CustomItemStacksManager.class
+drcustomitems\items\CustomItemsBuilder.class
+drcustomitems\items\listeners\CustomItemsActionsListener.class
+drcustomitems\DRCustomItems.class
+drcustomitems\items\actions\ActionsHolder.class
