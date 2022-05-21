@@ -35,14 +35,29 @@ public class CustomItemStacksManager {
 	}
 	
 	public boolean addCustomItemStack(String plugin, String id, ItemStack itemStack) {
-		if (!this.customPluginItemStacks.containsKey(plugin)) {
-			this.customPluginItemStacks.put(plugin, new HashMap<>());
+		Map<String, ItemStack> customPluginItemStacksMap = this.customPluginItemStacks.get(plugin);
+		if (customPluginItemStacksMap == null) {
+			customPluginItemStacksMap = new HashMap<>();
+			this.customPluginItemStacks.put(plugin, customPluginItemStacksMap);
 		}
-		if (this.customPluginItemStacks.get(plugin).containsKey(id)) {
+		if (customPluginItemStacksMap.containsKey(id)) {
 			return false;
 		}
-		this.customPluginItemStacks.get(plugin).put(id, itemStack);
+		customPluginItemStacksMap.put(id, itemStack);
 		return true;
+	}
+	
+	public ItemStack setCustomItemStack(String id, ItemStack itemStack) {
+		return this.customItemStacks.put(id, itemStack);
+	}
+	
+	public ItemStack setCustomItemStack(String plugin, String id, ItemStack itemStack) {
+		Map<String, ItemStack> customPluginItemStacksMap = this.customPluginItemStacks.get(plugin);
+		if (customPluginItemStacksMap == null) {
+			customPluginItemStacksMap = new HashMap<>();
+			this.customPluginItemStacks.put(plugin, customPluginItemStacksMap);
+		}
+		return customPluginItemStacksMap.put(id, itemStack);
 	}
 	
 	public boolean removeCustomItemStack(String id) {
@@ -54,8 +69,41 @@ public class CustomItemStacksManager {
 		return false;
 	}
 	
-	public boolean giveCustomItemStack(String id, Player player) {
+	public boolean removeCustomItemStack(String plugin, String id) {
+		Map<String, ItemStack> customPluginItemStacksMap = this.customPluginItemStacks.get(plugin);
+		if (customPluginItemStacksMap == null) {
+			return false;
+		}
+		ItemStack itemStack = customPluginItemStacksMap.remove(id);
+		if (itemStack == null) {
+			return false;
+		}
+		CustomItemsActionsManager.getInstance().removeActionsHolderOfItemStack(itemStack);
+		return true;
+	}
+	
+	public ItemStack getCustomItemStack(String id) {
 		ItemStack itemStack = this.customItemStacks.get(id);
+		if (itemStack == null) {
+			return null;
+		}
+		return new ItemStack(itemStack);
+	}
+	
+	public ItemStack getCustomItemStack(String plugin, String id) {
+		Map<String, ItemStack> customPluginItemStacksMap = this.customPluginItemStacks.get(plugin);
+		if (customPluginItemStacksMap == null) {
+			return null;
+		}
+		ItemStack itemStack = customPluginItemStacksMap.get(id);
+		if (itemStack == null) {
+			return null;
+		}
+		return new ItemStack(itemStack);
+	}
+	
+	public boolean giveCustomItemStack(String id, Player player) {
+		ItemStack itemStack = getCustomItemStack(id);
 		if (itemStack == null) {
 			return false;
 		}
@@ -64,7 +112,7 @@ public class CustomItemStacksManager {
 	}
 	
 	public boolean giveCustomItemStack(String plugin, String id, Player player) {
-		ItemStack itemStack = this.customPluginItemStacks.get(plugin).get(id);
+		ItemStack itemStack = getCustomItemStack(plugin, id);
 		if (itemStack == null) {
 			return false;
 		}
@@ -73,7 +121,7 @@ public class CustomItemStacksManager {
 	}
 	
 	public boolean giveCustomItemStack(String id, Player player, int slot) {
-		ItemStack itemStack = this.customItemStacks.get(id);
+		ItemStack itemStack = getCustomItemStack(id);
 		if (itemStack == null) {
 			return false;
 		}
@@ -82,7 +130,7 @@ public class CustomItemStacksManager {
 	}
 	
 	public boolean giveCustomItemStack(String plugin, String id, Player player, int slot) {
-		ItemStack itemStack = this.customPluginItemStacks.get(plugin).get(id);
+		ItemStack itemStack = getCustomItemStack(plugin, id);
 		if (itemStack == null) {
 			return false;
 		}

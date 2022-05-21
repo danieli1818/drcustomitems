@@ -16,6 +16,10 @@ public class CustomItemsBuilder {
 		this.itemStack = new ItemStack(material);
 	}
 	
+	public CustomItemsBuilder(ItemStack itemStack) {
+		this.itemStack = new ItemStack(itemStack);
+	}
+	
 	public CustomItemsBuilder setDisplayName(String name) {
 		this.itemStack.getItemMeta().setDisplayName(name);
 		return this;
