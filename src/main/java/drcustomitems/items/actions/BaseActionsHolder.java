@@ -19,6 +19,26 @@ public class BaseActionsHolder implements ActionsHolder {
 		this.clickActions = new ArrayList<>();
 	}
 	
+	public BaseActionsHolder(ActionsHolder actionsHolder) {
+		this();
+		this.rightClickActions.addAll(actionsHolder.getRightClickActions());
+		this.leftClickActions.addAll(actionsHolder.getLeftClickActions());
+		this.clickActions.addAll(actionsHolder.getClickActions());
+		setShouldCancelRightClick(actionsHolder.getShouldCancelRightClick());
+		setShouldCancelLeftClick(actionsHolder.getShouldCancelLeftClick());
+		setShouldCancelClick(actionsHolder.getShouldCancelClick());
+	}
+	
+	public BaseActionsHolder addAll(ActionsHolder actionsHolder) {
+		this.rightClickActions.addAll(actionsHolder.getRightClickActions());
+		this.leftClickActions.addAll(actionsHolder.getLeftClickActions());
+		this.clickActions.addAll(actionsHolder.getClickActions());
+		setShouldCancelRightClick(actionsHolder.getShouldCancelRightClick());
+		setShouldCancelLeftClick(actionsHolder.getShouldCancelLeftClick());
+		setShouldCancelClick(actionsHolder.getShouldCancelClick());
+		return this;
+	}
+	
 	@Override
 	public List<Action> getRightClickActions() {
 		return this.rightClickActions;

@@ -11,13 +11,16 @@ import net.minecraft.server.v1_12_R1.NBTTagCompound;
 public class CustomItemsBuilder {
 
 	private ItemStack itemStack;
+	private boolean shouldDisableDefaultUsage;
 	
 	public CustomItemsBuilder(Material material) {
 		this.itemStack = new ItemStack(material);
+		this.shouldDisableDefaultUsage = true;
 	}
 	
 	public CustomItemsBuilder(ItemStack itemStack) {
 		this.itemStack = new ItemStack(itemStack);
+		this.shouldDisableDefaultUsage = true;
 	}
 	
 	public CustomItemsBuilder setDisplayName(String name) {
@@ -30,13 +33,14 @@ public class CustomItemsBuilder {
 		return this;
 	}
 	
+	public CustomItemsBuilder disableDefaultUsage(boolean disableDefaultUsage) {
+		this.shouldDisableDefaultUsage = disableDefaultUsage;
+		return this;
+	}
+	
 	public ItemStack create(String id) {
 		net.minecraft.server.v1_12_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(this.itemStack);
-		NBTTagCompound tag = nmsItemStack.getTag();
-		if (tag == null) {
-			tag = new NBTTagCompound();
-		}
-		tag.setBoolean("DRCustomItem", true);
+		NBTTagCompound tag = getCommonNBTTagCompound(nmsItemStack);
 		nmsItemStack.setTag(tag);
 		ItemStack bukkitItemStack = CraftItemStack.asBukkitCopy(nmsItemStack);
 		CustomItemStacksManager.getInstance().addCustomItemStack(id, bukkitItemStack);
@@ -45,16 +49,22 @@ public class CustomItemsBuilder {
 	
 	public ItemStack create(String id, String pluginID) {
 		net.minecraft.server.v1_12_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(this.itemStack);
-		NBTTagCompound tag = nmsItemStack.getTag();
-		if (tag == null) {
-			tag = new NBTTagCompound();
-		}
-		tag.setBoolean("DRCustomItem", true);
+		NBTTagCompound tag = getCommonNBTTagCompound(nmsItemStack);
 		tag.setString("DRCustomItemPlugin", pluginID);
 		nmsItemStack.setTag(tag);
 		ItemStack bukkitItemStack = CraftItemStack.asBukkitCopy(nmsItemStack);
 		CustomItemStacksManager.getInstance().addCustomItemStack(pluginID, id, bukkitItemStack);
 		return bukkitItemStack;
+	}
+	
+	private NBTTagCompound getCommonNBTTagCompound(net.minecraft.server.v1_12_R1.ItemStack nmsItemStack) {
+		NBTTagCompound tag = nmsItemStack.getTag();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+		}
+		tag.setBoolean("DRCustomItem", true);
+		tag.setBoolean("ShouldDisableDefaultUsage", shouldDisableDefaultUsage);
+		return tag;
 	}
 	
 }

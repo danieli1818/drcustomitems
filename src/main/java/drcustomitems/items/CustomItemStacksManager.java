@@ -3,10 +3,12 @@ package drcustomitems.items;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import drcustomitems.items.actions.CustomItemsActionsManager;
+import net.minecraft.server.v1_12_R1.NBTTagCompound;
 
 public class CustomItemStacksManager {
 
@@ -148,6 +150,18 @@ public class CustomItemStacksManager {
 			}
 		}
 		return false;
+	}
+	
+	public boolean shouldDisableDefaultUsage(ItemStack itemStack) {
+		if (!isCustomItemStack(itemStack)) {
+			return false;
+		}
+		net.minecraft.server.v1_12_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+		NBTTagCompound tag = nmsItemStack.getTag();
+		if (!tag.hasKey("ShouldDisableDefaultUsage")) {
+			return false;
+		}
+		return tag.getBoolean("ShouldDisableDefaultUsage");
 	}
 	
 }

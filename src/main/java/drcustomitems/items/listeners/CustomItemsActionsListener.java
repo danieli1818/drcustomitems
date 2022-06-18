@@ -1,10 +1,14 @@
 package drcustomitems.items.listeners;
 
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
+import drcustomitems.items.CustomItemStacksManager;
 import drcustomitems.items.actions.Action;
 import drcustomitems.items.actions.ActionsHolder;
 import drcustomitems.items.actions.CustomItemsActionsManager;
@@ -13,22 +17,32 @@ public class CustomItemsActionsListener implements Listener {
 
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent event) {
-		System.out.println("Yay player interacted!");
 		if (event.hasItem() && CustomItemsActionsManager.getInstance().doesItemStackHaveActionsHolder(event.getItem())) {
-			System.out.println("Yay player interacted with a custom item!");
-			if (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR || event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
-				onRightClickItem(event, CustomItemsActionsManager.getInstance().getActionsHolderOfItemStack(event.getItem()));
-			} else {
-				onLeftClickItem(event, CustomItemsActionsManager.getInstance().getActionsHolderOfItemStack(event.getItem()));
+			if (CustomItemStacksManager.getInstance().shouldDisableDefaultUsage(event.getItem())) {
+				event.setCancelled(true);
 			}
-			onClickItem(event, CustomItemsActionsManager.getInstance().getActionsHolderOfItemStack(event.getItem()));
+			ActionsHolder actionsHolder = CustomItemsActionsManager.getInstance().getActionsHolderOfItemStack(event.getItem());
+			if (actionsHolder == null) {
+				return;
+			}
+			if (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR || event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
+				onRightClickItem(event, actionsHolder);
+			} else {
+				onLeftClickItem(event, actionsHolder);
+			}
+			onClickItem(event, actionsHolder);
 		}
 	}
 	
 	private void onRightClickItem(PlayerInteractEvent event, ActionsHolder actionsHolder) {
 		Player player = event.getPlayer();
-		for (Action action : actionsHolder.getRightClickActions()) {
-			action.runAction(player);
+		ItemStack itemStack = event.getItem();
+		List<Action> actions = actionsHolder.getRightClickActions();
+		if (actions == null) {
+			return;
+		}
+		for (Action action : actions) {
+			action.runAction(player, itemStack);
 		}
 		if (actionsHolder.getShouldCancelRightClick()) {
 			event.setCancelled(true);
@@ -37,8 +51,13 @@ public class CustomItemsActionsListener implements Listener {
 	
 	private void onLeftClickItem(PlayerInteractEvent event, ActionsHolder actionsHolder) {
 		Player player = event.getPlayer();
-		for (Action action : actionsHolder.getLeftClickActions()) {
-			action.runAction(player);
+		ItemStack itemStack = event.getItem();
+		List<Action> actions = actionsHolder.getLeftClickActions();
+		if (actions == null) {
+			return;
+		}
+		for (Action action : actions) {
+			action.runAction(player, itemStack);
 		}
 		if (actionsHolder.getShouldCancelLeftClick()) {
 			event.setCancelled(true);
@@ -47,8 +66,13 @@ public class CustomItemsActionsListener implements Listener {
 	
 	private void onClickItem(PlayerInteractEvent event, ActionsHolder actionsHolder) {
 		Player player = event.getPlayer();
-		for (Action action : actionsHolder.getClickActions()) {
-			action.runAction(player);
+		ItemStack itemStack = event.getItem();
+		List<Action> actions = actionsHolder.getClickActions();
+		if (actions == null) {
+			return;
+		}
+		for (Action action : actions) {
+			action.runAction(player, itemStack);
 		}
 		if (actionsHolder.getShouldCancelClick()) {
 			event.setCancelled(true);

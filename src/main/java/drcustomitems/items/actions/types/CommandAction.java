@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import drcustomitems.items.actions.Action;
 
@@ -42,7 +43,7 @@ public class CommandAction implements Action {
 	}
 	
 	@Override
-	public void runAction(Player player) {
+	public void runAction(Player player, ItemStack itemStack) {
 		for (String command : this.commands) {
 			String finishedCommand = command.replace("<player>", player.getName());
 			Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), finishedCommand);
